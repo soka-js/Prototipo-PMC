@@ -4,7 +4,7 @@ import { Delete, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { cop } from '@/lib/format';
-import { useAppStore } from '@/store/useAppStore';
+import { dailyAvailable, useAppStore } from '@/store/useAppStore';
 
 const QUICK_AMOUNTS = [20000, 45000, 65000, 120000];
 const MAX_DIGITS = 7;
@@ -13,7 +13,7 @@ const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'back']
 export function SimulateScreen() {
   const navigate = useNavigate();
   const simulateExpense = useAppStore((s) => s.simulateExpense);
-  const dailyAvailable = useAppStore((s) => s.dailyAvailable);
+  const session = useAppStore((s) => s.session);
   const [digits, setDigits] = useState('65000');
   const [pressed, setPressed] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ export function SimulateScreen() {
       <div className="px-6">
         <h1 className="text-[26px] font-extrabold tracking-tight">¿Cuánto quieres gastar?</h1>
         <p className="mt-1.5 text-[15px] text-ink-muted">
-          Calculamos si llegas tranquila al 30 de mes sin apretarte.
+          Calculamos si llegas al corte sin apretarte.
         </p>
       </div>
 
@@ -65,7 +65,7 @@ export function SimulateScreen() {
         </p>
         <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary-light px-3 py-1.5 text-xs font-semibold text-primary-dark">
           <Sun size={14} />
-          Tu disponible diario hoy es de {cop(dailyAvailable)}
+          Tu disponible diario hoy es de {cop(dailyAvailable(session))}
         </span>
       </div>
 

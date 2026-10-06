@@ -28,12 +28,3 @@ export const PRODUCTS: Record<
 export const DISCOUNTS = [10, 15, 20] as const;
 
 export const COMMISSION_PER_CUSTOMER = 2000;
-
-/** Lo que tiene comprometido este mes (suma $310.000). */
-export const COMMITMENTS = [
-  { label: 'Almuerzos U. (Lun - Jue)', amount: 56000 },
-  { label: 'Recargas Transmilenio', amount: 24000 },
-  { label: 'Plan telefonía móvil', amount: 35000 },
-  { label: 'Cobros que se repiten', amount: 111700 },
-  { label: 'Fotocopias y materiales', amount: 83300 },
-];

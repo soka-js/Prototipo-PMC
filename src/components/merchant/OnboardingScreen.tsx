@@ -7,7 +7,7 @@ import { WhatsAppChat } from './whatsapp/WhatsAppChat';
 const SCRIPT: { from: Sender; text: string; time: string }[] = [
   {
     from: 'bot',
-    text: '¡Hola! Soy Prototipo. Te ayudo a traer clientes de tu cuadra sin pagar nada fijo. ¿Qué tipo de negocio tienes y qué productos vendes principalmente?',
+    text: '¡Hola! Soy CIFRA. Te ayudo a traer clientes de tu cuadra sin pagar nada fijo. ¿Qué tipo de negocio tienes y qué productos vendes principalmente?',
     time: '10:14 a. m.',
   },
   {

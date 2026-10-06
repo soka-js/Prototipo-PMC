@@ -1,18 +1,25 @@
 import { useState } from 'react';
-import { Check, Cloud, Dumbbell, Handshake, Loader2, Music } from 'lucide-react';
+import { Check, Cloud, Dumbbell, Handshake, Loader2, Music, Repeat, Tv } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { cop } from '@/lib/format';
 import { useAppStore, type Subscription } from '@/store/useAppStore';
 
-const ICONS: Record<string, { Icon: typeof Music; bg: string; fg: string }> = {
-  spotify: { Icon: Music, bg: '#E6F6EC', fg: '#1A7F43' },
-  icloud: { Icon: Cloud, bg: '#E8F0FB', fg: '#2E5E9E' },
-  smartfit: { Icon: Dumbbell, bg: '#FFF4D6', fg: '#8A6410' },
-};
+type SubIcon = { Icon: typeof Music; bg: string; fg: string };
+
+/** Ícono según el nombre, porque los cobros se escriben a mano en /setup. */
+const ICONS: { match: RegExp; icon: SubIcon }[] = [
+  { match: /spotify|music|deezer|tidal/i, icon: { Icon: Music, bg: '#E6F6EC', fg: '#1A7F43' } },
+  { match: /icloud|drive|dropbox|nube|cloud|google one/i, icon: { Icon: Cloud, bg: '#E8F0FB', fg: '#2E5E9E' } },
+  { match: /fit|gym|gimnasio|bodytech/i, icon: { Icon: Dumbbell, bg: '#FFF4D6', fg: '#8A6410' } },
+  { match: /netflix|disney|prime|max|hbo|youtube|star|paramount|crunchyroll/i, icon: { Icon: Tv, bg: '#FCE9E6', fg: '#8A3426' } },
+];
+const DEFAULT_ICON: SubIcon = { Icon: Repeat, bg: '#F6F3EF', fg: '#706E6B' };
+
+const iconFor = (name: string) => ICONS.find((i) => i.match.test(name))?.icon ?? DEFAULT_ICON;
 
 function SubscriptionCard({ sub, onCancel }: { sub: Subscription; onCancel: () => void }) {
-  const { Icon, bg, fg } = ICONS[sub.id];
+  const { Icon, bg, fg } = iconFor(sub.name);
   const cancelled = sub.status === 'cancelled';
   const cancelling = sub.status === 'cancelling';
 
@@ -30,7 +37,7 @@ function SubscriptionCard({ sub, onCancel }: { sub: Subscription; onCancel: () =
           <p className={`text-[15px] font-semibold ${cancelled ? 'line-through decoration-ink-muted/50' : ''}`}>
             {sub.name}
           </p>
-          <p className="text-xs text-ink-muted">{sub.detail}</p>
+          {sub.detail && <p className="text-xs text-ink-muted">{sub.detail}</p>}
         </div>
         <p className="tabular text-right text-sm font-bold">
           {cop(sub.monthly)}
@@ -103,7 +110,7 @@ export function SubscriptionsScreen() {
       <div className="mt-4 flex gap-3 rounded-3xl border border-dashed border-[#DCD7CE] p-4">
         <Handshake size={20} className="mt-0.5 shrink-0 text-primary" />
         <p className="text-sm leading-relaxed text-ink-muted">
-          <strong className="text-ink">Gestión delegada y transparente.</strong> Prototipo gestiona la
+          <strong className="text-ink">Gestión delegada y transparente.</strong> CIFRA gestiona la
           baja sin que tengas que llamar ni llenar formularios.
         </p>
       </div>

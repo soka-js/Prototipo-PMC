@@ -4,16 +4,29 @@ import { CalendarDays, ChevronDown, ShieldCheck, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Pill } from '@/components/ui/Pill';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
-import { COMMITMENTS } from '@/lib/data';
 import { cop } from '@/lib/format';
-import { DAYS_LEFT, useAppStore } from '@/store/useAppStore';
-
-const FALLBACK = { amount: 65000, label: 'Salida con amigos', remaining: 220000, perDay: 18300 };
+import {
+  activeSubscriptions,
+  computeSimulation,
+  safeAvailable,
+  useAppStore,
+} from '@/store/useAppStore';
 
 export function ResponsePositiveScreen() {
   const navigate = useNavigate();
   const last = useAppStore((s) => s.lastSimulation);
-  const sim = last?.outcome === 'positive' ? last : FALLBACK;
+  const session = useAppStore((s) => s.session);
+  const subscriptions = activeSubscriptions(useAppStore((s) => s.subscriptions));
+  // Si se llega desde el selector de pantallas, se muestra un gasto de ejemplo que sí alcanza.
+  const sim =
+    last?.outcome === 'positive'
+      ? last
+      : computeSimulation(Math.min(65000, Math.max(0, safeAvailable(session))), session);
+  const recurringTotal = subscriptions.reduce((sum, s) => sum + s.monthly, 0);
+  const commitments = [
+    { label: 'Cobros que se repiten', amount: recurringTotal },
+    { label: 'Otros compromisos del mes', amount: Math.max(0, session.committed - recurringTotal) },
+  ];
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,7 +42,7 @@ export function ResponsePositiveScreen() {
           Sí, te alcanza.
         </h1>
         <p className="mt-3 text-[17px] leading-relaxed text-ink">
-          Te quedarían <strong>{cop(sim.remaining)}</strong> para los {DAYS_LEFT} días que faltan,
+          Te quedarían <strong>{cop(sim.remaining)}</strong> para los {session.daysLeft} días que faltan,
           unos <strong>{cop(sim.perDay)}</strong> por día.
         </p>
       </div>
@@ -43,9 +56,9 @@ export function ResponsePositiveScreen() {
         </div>
         <div className="rounded-3xl bg-surface-card p-4">
           <CalendarDays size={18} className="text-primary" />
-          <p className="mt-3 text-xs font-medium text-ink-muted">Próxima quincena</p>
-          <p className="tabular text-2xl font-extrabold tracking-tight">{DAYS_LEFT} días</p>
-          <p className="mt-1 text-xs text-ink-muted">Lunes 15 de abril</p>
+          <p className="mt-3 text-xs font-medium text-ink-muted">Próximo corte</p>
+          <p className="tabular text-2xl font-extrabold tracking-tight">{session.daysLeft} días</p>
+          <p className="mt-1 text-xs text-ink-muted">El {session.payday}</p>
         </div>
       </div>
 
@@ -74,7 +87,7 @@ export function ResponsePositiveScreen() {
         </button>
         {open && (
           <ul className="animate-fade-up divide-y divide-soft rounded-2xl bg-surface-card px-4">
-            {COMMITMENTS.map((c) => (
+            {commitments.map((c) => (
               <li key={c.label} className="flex justify-between py-2.5 text-sm">
                 <span className="text-ink-muted">{c.label}</span>
                 <span className="tabular font-semibold">{cop(c.amount)}</span>

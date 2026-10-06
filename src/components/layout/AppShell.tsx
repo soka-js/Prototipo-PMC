@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutList } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutList, Settings } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { useAppStore } from '@/store/useAppStore';
 import { MERCHANT_SCREENS, USER_SCREENS, roleFromPath } from '@/lib/screens';
@@ -50,6 +50,19 @@ export function AppShell() {
             </select>
           </label>
           <RoleSwitcher role={role} />
+          <Link
+            to="/setup"
+            aria-label="Datos de la sesión"
+            title="Datos de la sesión"
+            className={[
+              'flex h-9 w-9 items-center justify-center rounded-xl border transition-colors',
+              pathname === '/setup'
+                ? 'border-primary bg-primary-light text-primary'
+                : 'border-soft bg-surface-card text-ink-muted hover:bg-surface-subtle hover:text-ink',
+            ].join(' ')}
+          >
+            <Settings size={16} />
+          </Link>
         </div>
       </header>
 

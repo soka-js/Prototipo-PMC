@@ -3,13 +3,7 @@ import { PhoneFrame } from './PhoneFrame';
 import { BottomNav } from './BottomNav';
 
 /** Pantallas con la barra inferior fija; el resto son flujos enfocados. */
-const WITH_NAV = [
-  '/user/home',
-  '/user/subscriptions',
-  '/user/offers',
-  '/user/alert',
-  '/user/savings-confirmation',
-];
+const WITH_NAV = ['/user/home', '/user/subscriptions'];
 
 export function UserLayout() {
   const { pathname } = useLocation();

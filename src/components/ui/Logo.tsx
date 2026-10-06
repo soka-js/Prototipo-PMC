@@ -12,7 +12,7 @@ export function Logo({ suffix, light = false }: { suffix?: string; light?: boole
     <span className="inline-flex items-center gap-2">
       <LogoMark />
       <span className={`text-base font-bold tracking-tight ${light ? 'text-white' : 'text-ink'}`}>
-        Prototipo
+        CIFRA
         {suffix && (
           <span className={`ml-1 font-medium ${light ? 'text-white/70' : 'text-ink-muted'}`}>
             {suffix}

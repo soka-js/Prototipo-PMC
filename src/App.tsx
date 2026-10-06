@@ -2,13 +2,11 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { MerchantLayout } from '@/components/layout/MerchantLayout';
 import { UserLayout } from '@/components/layout/UserLayout';
-import { AlertScreen } from '@/components/user/AlertScreen';
+import { SetupScreen } from '@/components/setup/SetupScreen';
 import { ConnectScreen } from '@/components/user/ConnectScreen';
 import { HomeScreen } from '@/components/user/HomeScreen';
-import { OffersScreen } from '@/components/user/OffersScreen';
 import { ResponseNegativeScreen } from '@/components/user/ResponseNegativeScreen';
 import { ResponsePositiveScreen } from '@/components/user/ResponsePositiveScreen';
-import { SavingsConfirmationScreen } from '@/components/user/SavingsConfirmationScreen';
 import { SimulateScreen } from '@/components/user/SimulateScreen';
 import { SubscriptionsScreen } from '@/components/user/SubscriptionsScreen';
 import { CampaignResultsScreen } from '@/components/merchant/CampaignResultsScreen';
@@ -25,6 +23,7 @@ export default function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<Navigate to="/user/connect" replace />} />
+          <Route path="setup" element={<SetupScreen />} />
 
           <Route path="user" element={<UserLayout />}>
             <Route index element={<Navigate to="connect" replace />} />
@@ -34,9 +33,6 @@ export default function App() {
             <Route path="response-positive" element={<ResponsePositiveScreen />} />
             <Route path="response-negative" element={<ResponseNegativeScreen />} />
             <Route path="subscriptions" element={<SubscriptionsScreen />} />
-            <Route path="alert" element={<AlertScreen />} />
-            <Route path="offers" element={<OffersScreen />} />
-            <Route path="savings-confirmation" element={<SavingsConfirmationScreen />} />
           </Route>
 
           <Route path="merchant" element={<MerchantLayout />}>

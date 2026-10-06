@@ -9,12 +9,9 @@ export const USER_SCREENS: ScreenEntry[] = [
   { path: '/user/connect', label: 'Conexión de cuentas' },
   { path: '/user/home', label: 'Inicio · Saldo disponible' },
   { path: '/user/simulate', label: 'Simular un gasto' },
-  { path: '/user/response-positive', label: 'Respuesta: Sí te alcanza' },
-  { path: '/user/response-negative', label: 'Respuesta: Te quedarías corto' },
+  { path: '/user/response-positive', label: 'Respuesta: Sí, te alcanza' },
+  { path: '/user/response-negative', label: 'Respuesta: No te alcanza' },
   { path: '/user/subscriptions', label: 'Cobros que se repiten' },
-  { path: '/user/alert', label: 'Alerta de ritmo de gasto' },
-  { path: '/user/offers', label: 'Oferta cerca · Panadería' },
-  { path: '/user/savings-confirmation', label: 'Confirmación de ahorro' },
 ];
 
 export const MERCHANT_SCREENS: ScreenEntry[] = [

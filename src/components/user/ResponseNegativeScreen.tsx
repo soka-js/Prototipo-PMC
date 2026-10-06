@@ -1,23 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { Bus, Lock, Smartphone, Utensils } from 'lucide-react';
+import { CalendarClock, Lock, ShieldCheck, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Pill } from '@/components/ui/Pill';
 import { ScreenHeader } from '@/components/ui/ScreenHeader';
 import { cop } from '@/lib/format';
-import { useAppStore } from '@/store/useAppStore';
-
-const FALLBACK = { amount: 250000, shortfall: 80000, suggested: 120000 };
-
-const PROTECTED = [
-  { label: 'Almuerzos U. (Lun - Jue)', amount: 56000, Icon: Utensils },
-  { label: 'Recargas Transmilenio', amount: 24000, Icon: Bus },
-  { label: 'Plan telefonía móvil', amount: 35000, Icon: Smartphone },
-];
+import { computeSimulation, safeAvailable, useAppStore } from '@/store/useAppStore';
 
 export function ResponseNegativeScreen() {
   const navigate = useNavigate();
   const last = useAppStore((s) => s.lastSimulation);
-  const sim = last?.outcome === 'negative' ? last : FALLBACK;
+  const session = useAppStore((s) => s.session);
+  // Si se llega desde el selector de pantallas, se muestra un gasto de ejemplo que no alcanza.
+  const sim =
+    last?.outcome === 'negative'
+      ? last
+      : computeSimulation(Math.max(250000, safeAvailable(session) + 80000), session);
+  const protectedItems = [
+    { label: 'Compromisos del mes', amount: session.committed, Icon: Wallet },
+    { label: 'Gasto proyectado hasta el corte', amount: session.projected, Icon: CalendarClock },
+    { label: 'Colchón intocable', amount: session.cushion, Icon: ShieldCheck },
+  ].filter((p) => p.amount > 0);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -26,14 +28,15 @@ export function ResponseNegativeScreen() {
       <div className="px-6">
         <Pill tone="terracotta">SIMULACIÓN · Gasto planeado: {cop(sim.amount)}</Pill>
         <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight">
-          Te quedarías corto
+          No te alcanza
         </h1>
         <p className="mt-2 text-xl font-bold text-terracotta">
-          Te faltarían {cop(sim.shortfall)} antes del 30
+          Te faltarían {cop(sim.shortfall)} antes del {session.payday}
         </p>
         <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
-          Si puedes aplazarlo al próximo corte o reducirlo a {cop(sim.suggested)}, tus gastos básicos
-          de la semana quedan protegidos.
+          Si puedes aplazarlo al próximo corte
+          {sim.suggested > 0 && <> o reducirlo a {cop(sim.suggested)}</>}, tus gastos básicos de la
+          semana quedan protegidos.
         </p>
       </div>
 
@@ -42,7 +45,7 @@ export function ResponseNegativeScreen() {
           <Lock size={13} /> Lo que protegemos
         </p>
         <ul className="mt-2 divide-y divide-soft">
-          {PROTECTED.map(({ label, amount, Icon }) => (
+          {protectedItems.map(({ label, amount, Icon }) => (
             <li key={label} className="flex items-center gap-3 py-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-subtle text-ink-muted">
                 <Icon size={17} />

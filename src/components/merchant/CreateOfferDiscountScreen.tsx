@@ -86,7 +86,7 @@ export function CreateOfferDiscountScreen() {
               </p>
               <p className="mt-1 text-[13.5px]">
                 Comisión de {cop(COMMISSION_PER_CUSTOMER)} únicamente si el cliente paga con su tarjeta
-                vinculada a Prototipo. Si nadie compra, pagas $0.
+                vinculada a CIFRA. Si nadie compra, pagas $0.
               </p>
             </div>
           </ChatBubble>

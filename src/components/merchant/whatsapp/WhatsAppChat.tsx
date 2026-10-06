@@ -20,7 +20,7 @@ function ChatHeader({ status, back }: { status: string; back?: string }) {
       </span>
       <div className="min-w-0 flex-1 leading-tight">
         <p className="flex items-center gap-1 whitespace-nowrap text-[15px] font-semibold">
-          Prototipo Negocios
+          CIFRA Negocios
           <BadgeCheck size={15} className="shrink-0 fill-[#25D366] text-wa-header" />
         </p>
         <p className="truncate text-xs text-white/75">{status}</p>
