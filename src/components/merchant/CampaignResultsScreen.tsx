@@ -3,18 +3,16 @@ import { Bell, MessageCircle, RefreshCw, SlidersHorizontal, UserRoundCheck, User
 import { Button } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
 import { Pill } from '@/components/ui/Pill';
-import { COMMISSION_PER_CUSTOMER, MERCHANT, PRODUCTS } from '@/lib/data';
+import { COMMISSION_RATE, ESTIMATED_SALES, MERCHANT, PRODUCTS, commissionLabel } from '@/lib/data';
 import { cop } from '@/lib/format';
 import { useAppStore } from '@/store/useAppStore';
-
-const ESTIMATED_SALES = 320000;
 
 export function CampaignResultsScreen() {
   const navigate = useNavigate();
   const offer = useAppStore((s) => s.offer);
   const repeatCampaign = useAppStore((s) => s.repeatCampaign);
 
-  const commission = offer.customers * COMMISSION_PER_CUSTOMER;
+  const commission = Math.round(ESTIMATED_SALES * COMMISSION_RATE);
   const net = ESTIMATED_SALES - commission;
   const product = PRODUCTS[offer.product ?? 'combo'].label;
 
@@ -41,7 +39,7 @@ export function CampaignResultsScreen() {
           {offer.customers} clientes nuevos
         </p>
         <p className="mt-2 text-sm text-ink-muted">
-          Pagaste {cop(commission)} · {cop(COMMISSION_PER_CUSTOMER)} por cliente
+          Pagaste {cop(commission)} · {commissionLabel} de cada venta atribuida
         </p>
       </section>
 

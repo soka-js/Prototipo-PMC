@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Coffee, Cookie, Store } from 'lucide-react';
+import { COMMISSION_RATE, ESTIMATED_SALES, commissionLabel } from '@/lib/data';
+import { cop } from '@/lib/format';
 import { useSequence } from '@/lib/useSequence';
 import { ChatBubble, DateChip, TypingBubble, VoiceNote } from './whatsapp/ChatBubble';
 import { ChatInput, WhatsAppChat } from './whatsapp/WhatsAppChat';
@@ -10,7 +12,7 @@ function reply(question: string): string {
   const q = question.toLowerCase();
   if (q.includes('hora')) return PEAK_ANSWER;
   if (q.includes('oferta') || q.includes('campaña'))
-    return 'Tu oferta de Combo Café con Pan lleva 23 clientes nuevos. Pagaste $46.000 en total y 9 ya volvieron.';
+    return `Tu oferta de Combo Café con Pan lleva 23 clientes nuevos y ${cop(ESTIMATED_SALES)} en ventas. Pagaste ${cop(Math.round(ESTIMATED_SALES * COMMISSION_RATE))} de comisión (el ${commissionLabel}) y 9 ya volvieron.`;
   if (q.includes('vende') || q.includes('más') || q.includes('mas'))
     return 'En tu zona lo que más sale es pan y café (38%), luego bebidas y lácteos (27%).';
   return 'Buena pregunta. La reviso con los datos de tu cuadra y te cuento en el reporte del lunes.';

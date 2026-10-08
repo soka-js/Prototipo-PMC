@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Check, EyeOff, Loader2, Lock, ShieldCheck, Store, Unplug, Wallet } from 'lucide-react';
+import { Check, CheckCircle2, EyeOff, Loader2, Lock, ShieldCheck, Store, Unplug, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Logo } from '@/components/ui/Logo';
 import { Monogram } from '@/components/ui/Monogram';
+import { useOverlayRoot } from '@/components/ui/Overlay';
+import { StatusBar } from '@/components/layout/StatusBar';
 import { useAppStore } from '@/store/useAppStore';
 
 const ACCOUNTS = [
@@ -41,19 +44,93 @@ const PRIVACY = [
   },
 ];
 
+/** Duración de cada línea del proceso; al final se muestra "Listo" un instante. */
+const STEP_MS = [700, 1000, 1200];
+const DONE_MS = 450;
+
+const joinNames = (names: string[]) =>
+  names.length > 1 ? `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}` : names[0];
+
+/**
+ * Espera tras "Conectar": muestra que CIFRA lee y clasifica sola. Ocupa todo el
+ * marco del teléfono y se salta con un toque.
+ */
+function ClassifyingOverlay({ banks, onDone }: { banks: string; onDone: () => void }) {
+  const root = useOverlayRoot();
+  const [step, setStep] = useState(0);
+  const lines = [
+    `Conectando con ${banks}`,
+    'Leyendo tus movimientos de los últimos 3 meses',
+    'Clasificando 147 transacciones',
+  ];
+
+  useEffect(() => {
+    const t = setTimeout(
+      () => (step < lines.length ? setStep(step + 1) : onDone()),
+      step < lines.length ? STEP_MS[step] : DONE_MS,
+    );
+    return () => clearTimeout(t);
+  }, [step, lines.length, onDone]);
+
+  const content = (
+    <div
+      role="status"
+      aria-live="polite"
+      onClick={onDone}
+      className="pointer-events-auto absolute inset-0 flex animate-fade-in cursor-pointer flex-col bg-[#F4F1EC]"
+    >
+      <StatusBar />
+      <div className="flex flex-1 flex-col justify-center px-7">
+        <ul className="space-y-5">
+          {[...lines, 'Listo'].map((line, i) => {
+            if (i > step) return null;
+            const done = i < step || i === lines.length;
+            return (
+              <li key={line} className="flex animate-fade-up items-center gap-3">
+                {done ? (
+                  <CheckCircle2 size={22} className="shrink-0 text-primary" />
+                ) : (
+                  <Loader2 size={22} className="shrink-0 animate-spin text-primary" />
+                )}
+                <span
+                  className={`text-[15px] leading-snug ${
+                    i === lines.length ? 'font-extrabold text-primary' : done ? 'font-medium text-ink-muted' : 'font-semibold text-ink'
+                  }`}
+                >
+                  {line}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <p className="px-7 pb-10 text-center text-xs font-medium text-ink-muted">
+        No tienes que anotar ni clasificar nada.
+      </p>
+    </div>
+  );
+
+  return root ? createPortal(content, root) : content;
+}
+
 export function ConnectScreen() {
   const navigate = useNavigate();
   const { selectedAccounts, toggleAccount, connect } = useAppStore();
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleConnect = () => {
-    setLoading(true);
-    setTimeout(() => {
-      connect();
-      navigate('/user/home');
-    }, 1300);
-  };
+  const handleConnect = () => setLoading(true);
+
+  // Un toque y el temporizador pueden coincidir: navegar una sola vez.
+  const finished = useRef(false);
+  const finish = useCallback(() => {
+    if (finished.current) return;
+    finished.current = true;
+    connect();
+    navigate('/user/home');
+  }, [connect, navigate]);
+
+  const banks = joinNames(ACCOUNTS.filter((a) => selectedAccounts.includes(a.id)).map((a) => a.name));
 
   return (
     <div className="flex flex-1 flex-col px-5 pb-6">
@@ -137,6 +214,8 @@ export function ConnectScreen() {
           {loading ? 'Conectando…' : 'Conectar con seguridad'}
         </Button>
       </div>
+
+      {loading && <ClassifyingOverlay banks={banks} onDone={finish} />}
 
       <BottomSheet
         open={privacyOpen}

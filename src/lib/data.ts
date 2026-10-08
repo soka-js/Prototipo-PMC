@@ -27,4 +27,10 @@ export const PRODUCTS: Record<
 
 export const DISCOUNTS = [10, 15, 20] as const;
 
-export const COMMISSION_PER_CUSTOMER = 2000;
+/** Comisión sobre cada venta atribuida a una oferta (modelo del pitch). */
+export const COMMISSION_RATE = 0.05;
+
+/** Ventas atribuidas a la campaña de ejemplo. */
+export const ESTIMATED_SALES = 320000;
+
+export const commissionLabel = `${Math.round(COMMISSION_RATE * 100)} %`;
