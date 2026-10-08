@@ -12,6 +12,14 @@ export function HomeScreen() {
   const subscriptions = activeSubscriptions(useAppStore((s) => s.subscriptions));
   const recurringTotal = subscriptions.reduce((sum, s) => sum + s.monthly, 0);
   const [cushionOpen, setCushionOpen] = useState(false);
+  const available = safeAvailable(session);
+
+  // La resta que produce la cifra, siempre visible: varios entrevistados la confundían con el saldo.
+  const deductions = [
+    { label: 'Comprometido este mes', value: session.committed },
+    { label: 'Proyectado hasta el corte', value: session.projected },
+    ...(session.cushion > 0 ? [{ label: 'Colchón', value: session.cushion }] : []),
+  ];
 
   return (
     <div className="flex flex-1 flex-col">
@@ -26,17 +34,33 @@ export function HomeScreen() {
       </header>
 
       {/* Mitad superior: la cifra manda */}
-      <section className="flex flex-col items-center px-6 pb-8 pt-8 text-center">
+      <section className="flex flex-col items-center px-6 pb-6 pt-6 text-center">
         <span className="text-sm font-medium text-ink-muted">Puedes gastar hasta el {session.payday}</span>
-        <p className="tabular mt-2 text-[64px] font-extrabold leading-none tracking-[-0.04em] text-ink">
-          {cop(safeAvailable(session))}
+        <p className="tabular mt-2 text-[56px] font-extrabold leading-none tracking-[-0.04em] text-ink">
+          {cop(available)}
         </p>
-        <p className="mt-4 text-[12px] text-ink-muted">
-          Entró {cop(session.income)} · Comprometido {cop(session.committed)} · Proyectado{' '}
-          {cop(session.projected)}
-          {session.cushion > 0 && <> · Colchón {cop(session.cushion)}</>}
+
+        <dl className="tabular mt-5 w-full space-y-1.5 text-left text-[13px]">
+          <div className="flex justify-between gap-3 text-ink-muted">
+            <dt>Entró</dt>
+            <dd>{cop(session.income)}</dd>
+          </div>
+          {deductions.map(({ label, value }) => (
+            <div key={label} className="flex justify-between gap-3 text-ink-muted">
+              <dt>− {label}</dt>
+              <dd>{cop(value)}</dd>
+            </div>
+          ))}
+          <div className="flex justify-between gap-3 border-t border-soft pt-2 text-sm font-bold text-primary">
+            <dt>= Puedes gastar</dt>
+            <dd>{cop(available)}</dd>
+          </div>
+        </dl>
+        <p className="mt-2.5 text-[12px] leading-snug text-ink-muted">
+          Esto no es tu saldo. Es lo que queda después de lo que ya está comprometido.
         </p>
-        <Button block className="mt-8" onClick={() => navigate('/user/simulate')}>
+
+        <Button block className="mt-6" onClick={() => navigate('/user/simulate')}>
           ¿Puedo hacer un gasto?
         </Button>
       </section>
