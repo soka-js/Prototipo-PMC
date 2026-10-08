@@ -8,7 +8,8 @@ const OPTIONS: { role: Role; label: string; short: string; Icon: typeof Store }[
   { role: 'merchant', label: 'Ver Experiencia Tendero', short: 'Tendero', Icon: Store },
 ];
 
-export function RoleSwitcher({ role }: { role: Role }) {
+/** compact: en el celular solo los íconos, para dejar espacio al indicador del recorrido. */
+export function RoleSwitcher({ role, compact = false }: { role: Role; compact?: boolean }) {
   const navigate = useNavigate();
   const lastPath = useAppStore((s) => s.lastPath);
 
@@ -22,6 +23,8 @@ export function RoleSwitcher({ role }: { role: Role }) {
             type="button"
             role="tab"
             aria-selected={active}
+            aria-label={label}
+            title={label}
             onClick={() => !active && navigate(lastPath[r])}
             className={[
               'flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ease-out sm:text-sm',
@@ -30,7 +33,7 @@ export function RoleSwitcher({ role }: { role: Role }) {
           >
             <Icon size={16} />
             <span className="hidden md:inline">{label}</span>
-            <span className="md:hidden">{short}</span>
+            <span className={compact ? 'hidden sm:inline md:hidden' : 'md:hidden'}>{short}</span>
           </button>
         );
       })}

@@ -3,6 +3,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { MerchantLayout } from '@/components/layout/MerchantLayout';
 import { UserLayout } from '@/components/layout/UserLayout';
 import { SetupScreen } from '@/components/setup/SetupScreen';
+import { WelcomeScreen } from '@/components/welcome/WelcomeScreen';
 import { ConnectScreen } from '@/components/user/ConnectScreen';
 import { HomeScreen } from '@/components/user/HomeScreen';
 import { ResponseNegativeScreen } from '@/components/user/ResponseNegativeScreen';
@@ -21,8 +22,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route index element={<WelcomeScreen />} />
+
         <Route element={<AppShell />}>
-          <Route index element={<Navigate to="/user/connect" replace />} />
           <Route path="setup" element={<SetupScreen />} />
 
           <Route path="user" element={<UserLayout />}>
@@ -45,9 +47,9 @@ export default function App() {
             <Route path="chat-query" element={<ChatQueryScreen />} />
             <Route path="dashboard" element={<DashboardScreen />} />
           </Route>
-
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

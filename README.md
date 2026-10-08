@@ -5,6 +5,10 @@ Prototipo interactivo de alta fidelidad de un ecosistema financiero hiperlocal p
 - **Consumidor** (`/user/*`): una sola respuesta clara sobre cuánto puede gastar, sin tableros financieros.
 - **Tendero** (`/merchant/*`): conversación por WhatsApp con acciones en un toque y un panel web secundario.
 
+## Entrada pública
+
+`/` es la portada para quien llega por el QR: el problema, qué hace CIFRA, los cuatro pasos y el botón **Empezar el recorrido**. Cualquier ruta desconocida vuelve ahí. En las pantallas del consumidor, la barra de demo (fuera del teléfono) muestra el paso actual del recorrido con flechas de anterior y siguiente. `vercel.json` reescribe todas las rutas a `index.html` para que los enlaces profundos funcionen al recargar.
+
 ## Preparar una entrevista (YODA)
 
 Antes de cada entrevista, abre `/setup` (ícono de ajustes en la barra superior, fuera del marco del teléfono) y carga los datos del entrevistado: nombre, ingreso mensual, monto comprometido, gasto proyectado, colchón, día de corte, días restantes y sus cobros que se repiten. **Guardar** los aplica a todas las pantallas y los deja en `localStorage`, así que sobreviven a una recarga. **Restaurar valores de ejemplo** vuelve a cargar el caso de Mariana en el formulario.
@@ -30,6 +34,7 @@ src/
   components/
     layout/    AppShell (barra demo + cambio de rol), PhoneFrame, BottomNav, layouts por rol
     setup/     Panel de datos de la sesión (/setup)
+    welcome/   Portada pública en / (fuera del marco del teléfono)
     ui/        Button, Pill, BottomSheet, Toast, Logo, ScreenHeader…
     user/      6 pantallas del consumidor
     merchant/  7 pantallas del tendero + whatsapp/ (chat, burbujas, nota de voz)

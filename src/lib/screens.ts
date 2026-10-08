@@ -31,3 +31,12 @@ export const DEFAULT_PATH: Record<Role, string> = {
 
 export const roleFromPath = (pathname: string): Role =>
   pathname.startsWith('/merchant') ? 'merchant' : 'user';
+
+/** Recorrido guiado del consumidor; la respuesta positiva y la negativa son el mismo paso. */
+export const USER_JOURNEY: { label: string; paths: string[] }[] = [
+  { label: 'Conexión', paths: ['/user/connect'] },
+  { label: 'Inicio', paths: ['/user/home'] },
+  { label: 'Simular un gasto', paths: ['/user/simulate'] },
+  { label: 'Respuesta', paths: ['/user/response-positive', '/user/response-negative'] },
+  { label: 'Cobros que se repiten', paths: ['/user/subscriptions'] },
+];

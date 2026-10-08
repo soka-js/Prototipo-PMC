@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutList, Settings } from 'lucide-react';
-import { Logo } from '@/components/ui/Logo';
+import { Logo, LogoMark } from '@/components/ui/Logo';
 import { useAppStore } from '@/store/useAppStore';
 import { MERCHANT_SCREENS, USER_SCREENS, roleFromPath } from '@/lib/screens';
+import { JourneyStepper } from './JourneyStepper';
 import { RoleSwitcher } from './RoleSwitcher';
 
 export function AppShell() {
@@ -19,18 +20,28 @@ export function AppShell() {
   }, [pathname, role, setLastPath]);
 
   const screens = role === 'user' ? USER_SCREENS : MERCHANT_SCREENS;
+  const inJourney = pathname.startsWith('/user/');
 
   return (
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-soft bg-surface-card/90 px-4 backdrop-blur">
         <div className="flex min-w-0 items-center gap-3">
-          <Logo />
+          <Link to="/" aria-label="Volver a la presentación" title="Volver a la presentación">
+            {/* En el celular solo cabe el símbolo junto al recorrido y el cambio de rol. */}
+            <span className="hidden sm:inline">
+              <Logo />
+            </span>
+            <span className="sm:hidden">
+              <LogoMark />
+            </span>
+          </Link>
           <span className="hidden rounded-full bg-surface-subtle px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-muted lg:inline">
             Demo
           </span>
         </div>
 
         <div className="flex items-center gap-2">
+          {inJourney && <JourneyStepper pathname={pathname} />}
           <label className="relative hidden items-center sm:flex">
             <span className="sr-only">Ir a una pantalla</span>
             <LayoutList size={16} className="pointer-events-none absolute left-3 text-ink-muted" />
@@ -49,7 +60,7 @@ export function AppShell() {
               ))}
             </select>
           </label>
-          <RoleSwitcher role={role} />
+          <RoleSwitcher role={role} compact={inJourney} />
           <Link
             to="/setup"
             aria-label="Datos de la sesión"
